@@ -1,7 +1,7 @@
 use std::{env, io, time::Instant};
 
 mod days;
-use days::{day01};
+use days::{day01, day02};
 
 fn main() {
     let day = env::args()
@@ -14,9 +14,10 @@ fn main() {
         .expect("Invalid day number!");
 
     let func: fn() = match day {
-        1 => Some(day01::solve),
-        _ => None,
-    }.unwrap_or_else(|| panic!("Day should be in range (1,25) or Day {} is not implemented yet!", day));
+        1 => day01::solve,
+        2 => day02::solve,
+        _ => panic!("Day should be in range (1,25) or Day {} is not implemented yet!", day),
+    };
 
     println!("==================== DAY - {} ====================", day);
 

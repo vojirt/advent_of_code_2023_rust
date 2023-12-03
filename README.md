@@ -1,7 +1,7 @@
-My solutions in Rust of the [Advent of Code
-2023](https://adventofcode.com/2023). 
+## AoC 2023
+My solutions to the [Advent of Code 2023](https://adventofcode.com/2023) written in Rust.
 
-**Disclaimer**
+## Disclaimer
 I took the opportunity to learn a new language I never used before, thus, the
 solutions are not fast, not idiomatic nor memory efficient :) I never took time
 to refactor the working solutions so the code in this repo is the first try

@@ -1,7 +1,7 @@
 use std::{env, io, time::Instant};
 
 mod days;
-use days::{day01, day02, day03};
+use crate::days::*;
 
 fn main() {
     let day = env::args()
@@ -17,6 +17,7 @@ fn main() {
         1 => day01::solve,
         2 => day02::solve,
         3 => day03::solve,
+        4 => day04::solve,
         _ => panic!("Day should be in range (1,25) or Day {} is not implemented yet!", day),
     };
 

@@ -14,11 +14,11 @@ pub fn solve() {
     println!("Part 2 solution = {}", p2); 
 }
 
-fn solve_part_1(input: Vec<String>) -> u8 {
+fn solve_part_1(input: Vec<String>) -> i32 {
     0
 }
 
-fn solve_part_2(input: Vec<String>) -> u8 {
+fn solve_part_2(input: Vec<String>) -> i32 {
     0
 }
 
@@ -29,10 +29,11 @@ mod tests {
 
     #[test]
     fn simple_case() {
-        let input1 = vec!["".to_string()];
-        let input2 = vec!["".to_string()]; 
-        let p1 = solve_part_1(input1);
-        let p2 = solve_part_2(input2);
+        let input = "".split('\n')
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>();
+        let p1 = solve_part_1(input.clone());
+        let p2 = solve_part_2(input);
         assert_eq!(p1, 0);
         assert_eq!(p2, 0);
     }

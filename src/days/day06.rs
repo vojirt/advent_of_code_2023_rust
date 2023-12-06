@@ -49,8 +49,6 @@ fn solve_part_1(input: Vec<String>) -> u64 {
 fn solve_part_2(input: Vec<String>) -> u64 {
     let i1: String = input[0].chars().filter(|c| !c.is_whitespace()).collect();
     let i2: String = input[1].chars().filter(|c| !c.is_whitespace()).collect();
-    dbg!(&i1);
-    dbg!(&i2);
     let time: f64 = parse_row(&i1)[0] as f64;
     let distance: f64 = parse_row(&i2)[0] as f64;
 

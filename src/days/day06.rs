@@ -57,6 +57,7 @@ fn solve_part_2(input: Vec<String>) -> u64 {
     // r.num_solutions()
    
     // solving quadratic equation: velocity * (time_total - time_hold) > distance, where velocity = time_hold
+    // up to some corner cases
     ((-time - (time.powi(2) - 4_f64*distance).sqrt()) / -2_f64).ceil() as u64 - 
     ((-time + (time.powi(2) - 4_f64*distance).sqrt()) / -2_f64).ceil() as u64
 }

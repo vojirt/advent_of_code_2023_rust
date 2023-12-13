@@ -1,4 +1,4 @@
-use std::{fs, ops::Range};
+use std::{fs, collections::HashMap};
 
 pub fn solve() {
     let input = fs::read_to_string("./inputs/input_12.txt")
@@ -36,32 +36,37 @@ fn parse_line(line: &str) -> (&str, Vec<i64>) {
 fn possible_line_arrangements(pattern: &str, num_brokens: &[i64]) -> i64 {
     let blocks: Vec<&str> = pattern.split('.').filter(|s| !s.is_empty()).collect();
     let mut counter = 0;
-    recursive_match(&blocks, num_brokens, &mut counter);
+    let mut cache = HashMap::<(String, usize, usize), i64>::new(); 
+    recursive_match(&blocks, num_brokens, &mut counter, &mut cache);
     counter
 }
 
-fn recursive_match(blocks: &[&str], num_brokens: &[i64], counter: &mut i64) {
+fn recursive_match(blocks: &[&str], num_brokens: &[i64], counter: &mut i64, cache: &mut HashMap<(String, usize, usize), i64>) {
     //end conditions
     if blocks.is_empty() {
         // valid ? all broken tokens were matched
         if num_brokens.is_empty() {
             *counter += 1;
-            // println!("ADDING blocks");
         }
         return
     } else if num_brokens.is_empty() {
         // valid ? rest of input does not contain '#'
         if !blocks.iter().any(|ss| ss.chars().any(|c| c == '#')) {
             *counter += 1;
-            // println!("ADDING brokens");
         }
         return
     }
 
+    if let Some(x) = cache.get(&(blocks[0].to_owned(), blocks.len(), num_brokens.len())) {
+        *counter += x;
+        return 
+    }
+
+    let local_counter: i64 = *counter;
+
     //discard block if we can
     if !blocks[0].chars().any(|c| c == '#') {
-        // println!("Discard block {:?}", blocks[0]);
-        recursive_match(&blocks[1..], num_brokens, counter);
+        recursive_match(&blocks[1..], num_brokens, counter, cache);
     }
 
     //expand pattern
@@ -83,14 +88,12 @@ fn recursive_match(blocks: &[&str], num_brokens: &[i64], counter: &mut i64) {
                     if block_split < blocks[0].len() {
                         tmp.insert(0, &blocks[0][block_split..]);
                     }
-                    // println!("Recursion 1 - Pattern {:?} matched in {:?} at {:?}, recursion block {:?} with num_brokens {:?}", pattern, &block_to_expand[block_start..], x, tmp, &num_brokens[1..]);
-                    recursive_match(&tmp, &num_brokens[1..], counter);
+                    recursive_match(&tmp, &num_brokens[1..], counter, cache);
                     if blocks[0][block_start+x..].starts_with('#') {
                         break
                     }
                 } else {
-                    // println!("Recursion 2 - Pattern {:?} matched in {:?} at {:?}, recursion block {:?}", pattern, &block_to_expand[block_start..], x, &blocks[1..]);
-                    recursive_match(&blocks[1..], &num_brokens[1..], counter);
+                    recursive_match(&blocks[1..], &num_brokens[1..], counter, cache);
                     break
                 }
                 let mut consecutive = 0;
@@ -107,6 +110,13 @@ fn recursive_match(blocks: &[&str], num_brokens: &[i64], counter: &mut i64) {
         }
     }
 
+    let diff = *counter - local_counter;
+    if let Some(x) = cache.insert((blocks[0].to_owned(), blocks.len(), num_brokens.len()), diff) {
+        if x != diff {
+            println!("{} -> {}", diff, x);
+            panic!("Updating cache with different values");
+        }
+    }
 }
 
 fn match_wildcard(str_wild: &str, pattern: &str) -> bool {
@@ -157,7 +167,6 @@ fn parse_line_augmented(line: &str) -> (String, Vec<i64>) {
 fn solve_part_2(input: Vec<String>) -> i64 {
     input.iter()
         .map(|line| {
-            println!("{}",line);
             let (pattern, num_brokens) = parse_line_augmented(line);
             possible_line_arrangements(&pattern, &num_brokens)
         })

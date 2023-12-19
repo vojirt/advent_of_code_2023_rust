@@ -31,6 +31,8 @@ fn main() {
         15 => day15::solve,
         16 => day16::solve,
         17 => day17::solve,
+        18 => day18::solve,
+        19 => day19::solve,
         _ => panic!("Day should be in range (1,25) or Day {} is not implemented yet!", day),
     };
 

@@ -1,4 +1,4 @@
-use std::{fs, collections::HashMap};
+use std::{fs, collections::HashMap, ops::Range};
 
 pub fn solve() {
     let input = fs::read_to_string("./inputs/input_18.txt")
@@ -180,7 +180,6 @@ fn solve_part_1(input: Vec<String>) -> i64 {
 
 fn solve_part_2(input: Vec<String>) -> i64 {
     let mut map = HashMap::<i64, Vec::<(i64, Direction)>>::new();
-    let mut map_vertical = HashMap::<i64, i64>::new();
     let mut current_loc: (i64, i64) = (0, 0);
     input.iter()
         .for_each(|line| {
@@ -244,21 +243,22 @@ fn solve_part_2(input: Vec<String>) -> i64 {
             let mut c = 0;
             let mut indicator = 1;
             let mut init_dir = vec[0].1.clone();
-
             (1..vec.len()).for_each(|i| {
                 if vec[i].1 != init_dir {
                     init_dir = vec[i].1.clone(); 
                     if indicator % 2 == 1 {
                         c += vec[i].0 - vec[i-1].0 + 1;
-                    } else {
-                        c += 1
                     }
                     indicator += 1;
                 } 
-                else if indicator % 2 == 1 || vec[i].1 == vec[i-1].1 {
-                    c += vec[i].0 - vec[i-1].0;
-                }
             });
+            if vec[0].1 == vec[1].1 {
+                c += vec[1].0 - vec[0].0;
+            }
+            if vec[vec.len()-2].1 == vec[vec.len()-1].1 {
+                c += vec[vec.len()-1].0 - vec[vec.len()-2].0;
+            }
+
             // dbg!(&vec);
             // println!("{y} : {c}");
             acc + c

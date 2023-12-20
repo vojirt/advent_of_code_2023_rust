@@ -180,7 +180,9 @@ fn solve_part_1(input: Vec<String>) -> i64 {
 
 fn solve_part_2(input: Vec<String>) -> i64 {
     let mut map = HashMap::<i64, Vec::<(i64, Direction)>>::new();
+    let mut map_x = HashMap::<i64, Vec::<Range<i64>>>::new();
     let mut current_loc: (i64, i64) = (0, 0);
+    let mut path_length = 0;
     input.iter()
         .for_each(|line| {
             // let mut line_split = line.split_whitespace();
@@ -202,6 +204,7 @@ fn solve_part_2(input: Vec<String>) -> i64 {
                     _ => panic!("Invalid direction!"),
                 };
             let num_steps = i64::from_str_radix(&linestr[2..7], 16).unwrap();
+            path_length += num_steps;
 
             match dir {
                 Direction::Down => {
@@ -225,9 +228,19 @@ fn solve_part_2(input: Vec<String>) -> i64 {
                     current_loc.0 -= num_steps;
                 },
                 Direction::Left => {
+                    if let Some(val) = map_x.get_mut(&current_loc.0) {
+                        val.push(current_loc.1-num_steps..current_loc.1+1);
+                    } else {
+                        map_x.insert(current_loc.0, vec![current_loc.1-num_steps..current_loc.1]);
+                    }
                     current_loc.1 -= num_steps;
                 },
                 Direction::Right => {
+                    if let Some(val) = map_x.get_mut(&current_loc.0) {
+                        val.push(current_loc.1..current_loc.1+num_steps+1);
+                    } else {
+                        map_x.insert(current_loc.0, vec![current_loc.1..current_loc.1+num_steps]);
+                    }
                     current_loc.1 += num_steps;
                 },
                 _ => (),
@@ -247,22 +260,20 @@ fn solve_part_2(input: Vec<String>) -> i64 {
                 if vec[i].1 != init_dir {
                     init_dir = vec[i].1.clone(); 
                     if indicator % 2 == 1 {
-                        c += vec[i].0 - vec[i-1].0 + 1;
+                        if let Some(map_x_row) = map_x.get(y) {
+                            let mid_point =  (vec[i].0 + vec[i-1].0) / 2;
+                            if !map_x_row.iter().any(|r| r.contains(&mid_point)) {
+                                c += vec[i].0 - vec[i-1].0 - 1;
+                            }
+                        } else {
+                            c += vec[i].0 - vec[i-1].0 - 1;
+                        }
                     }
                     indicator += 1;
                 } 
             });
-            if vec[0].1 == vec[1].1 {
-                c += vec[1].0 - vec[0].0;
-            }
-            if vec[vec.len()-2].1 == vec[vec.len()-1].1 {
-                c += vec[vec.len()-1].0 - vec[vec.len()-2].0;
-            }
-
-            // dbg!(&vec);
-            // println!("{y} : {c}");
             acc + c
-       })
+       }) + path_length
 }
 
 
